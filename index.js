@@ -22,13 +22,13 @@
 */
 
 var fs = require("fs");
-var RangeList = require("range-list");
-var Range = require("range");
+var RangeList = require("./lib/range-list.js");
+var Range = require("./lib/range.js");
 
-var ucd = require("ucd");
-var canonicalCombiningClass = require("canonical-combining-class");
-var generalCategory = require("general-category");
-var normalizationProperties = require("normalization-properties");
+var ucd = require("./lib/ucd.js");
+var canonicalCombiningClass = require("./lib/canonical-combining-class.js");
+var generalCategory = require("./lib/general-category.js");
+var normalizationProperties = require("./lib/normalization-properties.js");
 
 var numCodepoints = (1 << 16) + (1 << 20); // 1,114,112
 var candidates = new RangeList([new Range(0, numCodepoints)]);
@@ -88,6 +88,7 @@ var decodepoint = function(codepoint) {
 };
 
 // Tests...
+console.log("Final testing... (takes a little while)");
 
 var seen = {};
 for(var b1 = 0; b1 < blocksize; b1++) {
@@ -128,3 +129,4 @@ for(var b1 = 0; b1 < blocksize; b1++) {
 
 fs.writeFileSync("get-block-start.json", JSON.stringify(get_block_start));
 fs.writeFileSync("get-b2.json", JSON.stringify(get_b2));
+console.log("OK");
