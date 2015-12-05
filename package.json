@@ -1,0 +1,21 @@
+{
+	"name": "base65536gen",
+	"version": "0.0.1",
+	"description": "Generates \"safe\" blocks of code points for use in Base65536",
+	"homepage": "https://github.com/ferno/base65536gen",
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/ferno/base65536gen.git"
+	},
+	"main": "index.js",
+	"keywords": [
+		"base64",
+		"base65536",
+		"encoding",
+		"unicode",
+		"text",
+		"decoding"
+	],
+	"author": "ferno",
+	"license": "MIT"
+}
