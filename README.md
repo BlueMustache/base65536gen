@@ -1,6 +1,6 @@
 # base65536gen
 
-This module's purpose is to generate 256 + 1 blocks of 256 Unicode code points suitable for use in the `base65536` project.
+This module's purpose is to generate 256 + 1 blocks of 256 Unicode code points suitable for use in [the `base65536` project](https://github.com/ferno/base65536).
 
 In an ideal world, this program should only ever need to be executed once. The results are then transplanted into the `base65536` project for usage there.
 
@@ -8,7 +8,7 @@ In an ideal world, this program should only ever need to be executed once. The r
 
 [Base64](https://en.wikipedia.org/wiki/Base64) is used to encode arbitrary binary data as "plain" text using a small, extremely safe repertoire of 64 (well, 65) characters. Base64 remains highly suitable to text systems where the range of characters available is very small -- i.e., anything still constrained to plain ASCII. Base64 encodes 6 bits, or 3/4 of an octet, per character.
 
-However, now that Unicode is king of the world, the range of characters which can be considered "safe" in this way is significantly larger in many situations. Base65536 applies the same basic principle to a carefully-chosen repertoire of 65,536 (well, 65,792) Unicode code points, encoding 16 bits, or 2 octets, per character.
+However, now that Unicode rules the world, the range of characters which can be considered "safe" in this way is significantly larger in many situations. Base65536 applies the same basic principle to a carefully-chosen repertoire of 65,536 (well, 65,792) Unicode code points, encoding 16 bits, or 2 octets, per character.
 
 The purpose of `base65536gen` is to generate these safe characters.
 
@@ -20,7 +20,7 @@ Not every Unicode character is "safe" for this purpose, otherwise this whole pro
 * No [whitespace characters](https://en.wikipedia.org/wiki/Whitespace_character#Unicode), no unprintable characters. If a Base65536 text contains whitespace, it may be eliminated or corrupted when the text is passed through, for example, an XML document. Also, a person trying to select that text may accidentally miss the whitespace, particularly if the whitespace is leading or trailing.
 * No [control characters](https://en.wikipedia.org/wiki/Unicode_control_characters). These won't render properly in most situations. In fact, any characters which have any chance of being replaced with U+FFFD REPLACEMENT CHARACTER are undesirable here.
 * No non-characters or unassigned code points. This constrains us to around 120,000 code points from the full 1,114,112-code point range, at the time of writing.
-	* No surrogate pairs.
+* No surrogate pairs.
 * No [combining characters](https://en.wikipedia.org/wiki/Combining_character), including diacritics. This is hazardous if the encoding allows a combining character to appear first in the text. It's simpler to discard them altogether.
 * No delimiters, punctuation or quotes. This means Base65536 can itself be safely put inside delimiters and quotes if need be, without ambiguity.
 * In fact, we should just constrain our options to characters from "safe" [General Categories](https://en.wikipedia.org/wiki/Unicode_character_property#General_Category) of Unicode, if possible. It turns out that category "Lo" ("Letter, other") all by itself is plenty.
@@ -30,7 +30,7 @@ Not every Unicode character is "safe" for this purpose, otherwise this whole pro
 
 This final point is the most difficult to satisfy. Unicode has four "normal forms", NFD, NFC, NFKD and NFKC. Applying any of these four normalization processes to a Unicode string can cause the code point sequence to alter, which for our purposes constitutes data corruption. As a pertinent example, [Twitter applies NFC normalization to all its Tweets](https://dev.twitter.com/overview/api/counting-characters). It would be great if short Base65536 strings could survive passing through a Tweet.
 
-Although a very large number of assigned Unicode code points *are* actually safe in this way, proving that this is true was surprisingly tricky. [Unicode Standard Annex #15, UNICODE NORMALIZATION FORMS](http://unicode.org/reports/tr15/) gives more information about this, including the follow incredibly valuable facts:
+Although a very large number of assigned Unicode code points *are* actually safe in this way, proving that this is true and finding those code points was surprisingly tricky. [Unicode Standard Annex #15, UNICODE NORMALIZATION FORMS](http://unicode.org/reports/tr15/) gives more information about this, including the follow incredibly valuable facts:
 
 * [A string normalized under one version of Unicode remains normalized under future versions, provided it uses no unassigned code points](http://unicode.org/reports/tr15/#Stability_of_Normalized_Forms). So if we get this right once, we don't need to worry about future changes to Unicode making it wrong again.
 * [Normalization Forms are not closed under string concatenation](http://unicode.org/reports/tr15/#Concatenation). If more text is put at the beginning or the end of a Base65536 text, it could not only change but *corrupt* the binary. However, Base64 has this same issue. As long as the text is protected by delimiters/brackets/whitespace, it should be fine.
