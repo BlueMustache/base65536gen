@@ -53,3 +53,5 @@ UCD
 get-b2.json
 get-block-start.json
 UCD/ArabicShaping.txt
+all.base65536
+node_modules

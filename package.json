@@ -16,6 +16,10 @@
 		"text",
 		"decoding"
 	],
+	"dependencies": [
+		"string.fromcodepoint",
+		"string.prototype.codepointat"
+	],
 	"author": "ferno",
 	"license": "MIT"
 }

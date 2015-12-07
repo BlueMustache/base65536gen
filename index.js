@@ -21,6 +21,9 @@
 	undesirable :-/
 */
 
+
+require("string.fromcodepoint");
+require("string.prototype.codepointat");
 var fs = require("fs");
 var RangeList = require("./lib/range-list.js");
 var Range = require("./lib/range.js");
@@ -31,7 +34,13 @@ var generalCategory = require("./lib/general-category.js");
 var normalizationProperties = require("./lib/normalization-properties.js");
 
 var numCodepoints = (1 << 16) + (1 << 20); // 1,114,112
-var candidates = new RangeList([new Range(0, numCodepoints)]);
+//var min = 0,         max = (1 << 7);      // CPs with 1-byte UTF-8 encodings
+//var min = (1 << 7),  max = (1 << 11);     // CPs with 2-byte UTF-8 encodings
+//var min = (1 << 11), max = (1 << 16);     // CPs with 3-byte UTF-8 encodings
+//var min = (1 << 16), max = numCodepoints; // CPs with 4-byte UTF-8 encodings
+var min = 0, max = numCodepoints;           // All CPs
+
+var candidates = new RangeList([new Range(min, max)]);
 
 var quickChecks = [
 	"NFD_QC" , // canonical decomposition
@@ -44,7 +53,14 @@ quickChecks.forEach(function(property) {
 	candidates = candidates.intersection(normalizationProperties.byProperty(property, "Y"));
 });
 
-candidates = candidates.intersection(generalCategory.byGc("Lo")); // Letter, other
+// var safeGeneralCategories = generalCategory.safeGcs;
+var safeGeneralCategories = ["Lo"];
+var charsInSafeGcs = new RangeList();
+safeGeneralCategories.forEach(function(gc) {
+	charsInSafeGcs = charsInSafeGcs.union(generalCategory.byGc(gc));
+});
+
+candidates = candidates.intersection(charsInSafeGcs);
 
 candidates = candidates.intersection(canonicalCombiningClass.byCcc(0));
 
@@ -104,7 +120,7 @@ for(var b1 = 0; b1 < blocksize; b1++) {
 
 		// Make sure our encoded code point has all of the desired properties
 		var gc = generalCategory.byCodepoint(codepoint);
-		if(gc !== "Lo") {
+		if(!safeGeneralCategories.some(function(safeGc) { return safeGc === gc; })) {
 			throw new Error("Bad general category " + gc + " for codepoint " + String(codepoint));
 		}
 		quickChecks.forEach(function(property) {
@@ -127,6 +143,16 @@ for(var b1 = 0; b1 < blocksize; b1++) {
 	}
 }
 
-fs.writeFileSync("get-block-start.json", JSON.stringify(get_block_start));
-fs.writeFileSync("get-b2.json", JSON.stringify(get_b2));
+fs.writeFileSync(__dirname + "/get-block-start.json", JSON.stringify(get_block_start));
+fs.writeFileSync(__dirname + "/get-b2.json", JSON.stringify(get_b2));
+
+var str = "";
+for(var b2 = -1; b2 < 256; b2++) {
+	for(var b1 = 0; b1 < 256; b1++) {
+		str += String.fromCodePoint(encodepoint(b1, b2));
+	}
+	str += "\n";
+}
+fs.writeFileSync(__dirname + "/all.base65536", str);
+
 console.log("OK");
