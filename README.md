@@ -61,6 +61,13 @@ Basically it pulls the data from UCD (well, a local copy of it) and then assembl
 
 The extra block is for cases where the binary data runs for an odd number of bytes. A single code point encodes two bytes, and there's no way for it to signal that it only encodes one byte without these extra code points.
 
+## Numbers
+
+* Unicode has **1,114,112** (2<sup>16</sup> + 2<sup>20</sup>) code points.
+* As of Unicode 8.0 (the most recent version at the time of writing), [**260,319** code points have been assigned](http://babelstone.blogspot.co.uk/2005/11/how-many-unicode-characters-are-there.html); unassigned characters cannot be used because they have unpredictable properties if they ever are assigned.
+* `[base65536gen](https://github.com/ferno/base65536gen)` returns **92,240** safe code points from the "Letter, Other" [General Category](https://en.wikipedia.org/wiki/Unicode_character_property#General_Category).
+* Modifying `base65536gen` to add other safe General Categories (all the Letter, Number and Symbol GCs) yields **101,064** safe code points.
+
 ## License
 
 MIT
