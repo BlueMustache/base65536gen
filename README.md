@@ -68,6 +68,20 @@ The extra block is for cases where the binary data runs for an odd number of byt
 * `base65536gen` returns **92,240** safe code points from the "Letter, Other" [General Category](https://en.wikipedia.org/wiki/Unicode_character_property#General_Category).
 * Modifying `base65536gen` to add other safe General Categories (all the Letter, Number and Symbol GCs) yields **101,064** safe code points.
 
+## And is it done?
+
+Yes, basically. `base65536gen` has successfully generated the needed code points which are now used in version 1.0.0 of [`base65536`](https://github.com/ferno/base65536). You can see the results as `get-b2.json` and `get-block-start.json`.
+
+The range of code points in use can no longer be changed without incurring, at the very least, a major version bump in `base65536`. However, `base65536` has started to be ported to other languages and I consider it *extremely* undesirable to introduce multiple incompatible versions of the Base65536 encoding, so this is unlikely to happen unless a very serious problem is discovered. `base65536gen` is now ancient history.
+
+Still, if I tried this again, here are some things I might do differently:
+
+* Include other safe Unicode General Categories, so that Base65536 output does not seemingly consist only of CJK characters. At present, to my eye (not being a reader of those languages) it resembles ordinary CJK text. I would prefer Base65536 to be more obviously a kludge of diverse scripts, so that it can't be mistaken for text, even by someone who knows none of those scripts. Naturally the lion's share of code points will have to remain CJK though, that's just where the safe code points mostly are.
+* Try harder to select lower code points, those with 3-byte encodings in UTF-8 and 2-byte encodings in UTF-16, to reduce the average size of the encoded Base65536 output.
+* Perhaps try to find larger blocks of 512 or 1024 code points rather than 256, or other techniques for reducing the size of the lookup tables.
+
+If you have other observations I would be interested.
+
 ## License
 
 MIT
